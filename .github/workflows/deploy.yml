@@ -1,11 +1,18 @@
 - name: Deploy to EC2
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.EC2_IP }}
-        username: ec2-user
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          docker pull ehtisham1337/flask-app:latest
-          docker stop flask-container || true
-          docker rm flask-container || true
-          docker run -d -p 80:5000 --name flask-container ehtisham1337/flask-app:latest
+  uses: appleboy/ssh-action@v1.0.0
+  with:
+    host: ${{ secrets.EC2_IP }}
+    username: ec2-user
+    key: ${{ secrets.EC2_SSH_KEY }}
+    port: 22
+    timeout: 120s
+    script_stop: true
+    script: |
+      whoami
+      groups
+      docker --version
+      sudo systemctl start docker
+      docker pull ehtisham1337/flask-app:latest
+      docker stop flask-container || true
+      docker rm flask-container || true
+      docker run -d -p 80:5000 --name flask-container ehtisham1337/flask-app:latest
